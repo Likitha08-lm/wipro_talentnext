@@ -1,37 +1,58 @@
 package streams;
-import java.util.*;
+import java.io.*;
+import java.util.Date;
 
 public class Question1 {
+	public class EmployeeSerializationDemo{
+	static class Employee implements Serializable {
+		private static final long serialVersionUID = 1L;
 
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		Scanner scanner = new Scanner(System.in);
-		// Step 1: Get file name
-		System.out.println("Enter the file name:");
-		String fileName = scanner.nextLine();
-
-		// Step 2: Get character to be counted
-		System.out.println("Enter the character to be counted:");
-		char ch = scanner.nextLine().toLowerCase().charAt(0); // Case insensitive
-		int count = 0;
-		try {
-			FileReader fr = new FileReader(fileName);
-			int data;
-			while ((data = fr.read()) != -1) {
-				char currentChar = Character.toLowerCase((char) data);
-				if (currentChar == ch) {
-					count++;
-				}
-			}
-			fr.close();
-			System.out.println("File '" + fileName + "' has " + count +
-					" instances of letter '" + ch + "'.");
-		} catch (FileNotFoundException e) {
-			System.out.println("File not found: " + fileName);
-		} catch (IOException e) {
-			System.out.println("Error reading the file.");
+		private String name;
+		private Date dateOfBirth;
+		private String department;
+		private String designation;
+		private double salary;
+		public Employee() {}
+		public Employee(String name, Date dateOfBirth, String department, String designation, double salary) {
+			this.name = name;
+			this.dateOfBirth = dateOfBirth;
+			this.department = department;
+			this.designation = designation;
+			this.salary = salary;
 		}
-
+		public String getName() { return name; }
+		public void setName(String name) { this.name = name; }
+		public Date getDateOfBirth() { return dateOfBirth; }
+		public void setDateOfBirth(Date dateOfBirth) { this.dateOfBirth = dateOfBirth; }
+		public String getDepartment() { return department; }
+		public void setDepartment(String department) { this.department = department; }
+		public String getDesignation() { return designation; }
+		public void setDesignation(String designation) { this.designation = designation; }
+		public double getSalary() { return salary; }
+		public void setSalary(double salary) { this.salary = salary; }
+		public String toString() {
+			return "Name: " + name +
+					"\nDate of Birth: " + dateOfBirth +
+					"\nDepartment: " + department +
+					"\nDesignation: " + designation +
+					"\nSalary: " + salary;
+		}
 	}
-
+	public static void main(String[] args) {
+		Employee emp = new Employee("Anitha", new Date(96, 4, 24), "HR", "Manager", 65000.0);
+		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("data"))) {
+			oos.writeObject(emp);
+			System.out.println("Employee object serialized to file 'data'.");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("data"))) {
+			Employee deserializedEmp = (Employee) ois.readObject();
+			System.out.println("\nDeserialized Employee object:");
+			System.out.println(deserializedEmp);
+		} catch (IOException | ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+	}
 }
